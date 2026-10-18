@@ -32,9 +32,6 @@ const pharmacies = [
   Pharmacy(id: 'truemeds', name: 'Truemeds', initials: 'TM', domain: 'truemeds.in', color: AppColors.mint, searchBase: 'https://www.truemeds.in/search/'),
   Pharmacy(id: 'amazon', name: 'Amazon Pharmacy', initials: 'AZ', domain: 'amazon.in', color: Color(0xFFFF8A4C), searchBase: 'https://www.amazon.in/s?k='),
   Pharmacy(id: 'pharmeasy', name: 'PharmEasy', initials: 'PE', domain: 'pharmeasy.in', color: AppColors.violet, searchBase: 'https://pharmeasy.in/search/all?name='),
-  // Flipkart's pharmacy partnership with Sastasundar ended in Jan 2025.
-  // Confirm Flipkart Health+ still takes medicine orders before release.
-  Pharmacy(id: 'flipkart', name: 'Flipkart Health+', initials: 'FK', domain: 'flipkart.com', color: Color(0xFF6C8CFF), searchBase: 'https://www.flipkart.com/search?q='),
   Pharmacy(id: 'tata1mg', name: 'Tata 1mg', initials: '1mg', domain: '1mg.com', color: AppColors.coral, searchBase: 'https://www.1mg.com/search/all?name='),
   Pharmacy(id: 'netmeds', name: 'Netmeds', initials: 'NM', domain: 'netmeds.com', color: AppColors.sky, searchBase: 'https://www.netmeds.com/catalogsearch/result/'),
   Pharmacy(id: 'apollo', name: 'Apollo Pharmacy', initials: 'AP', domain: 'apollopharmacy.in', color: AppColors.amber, searchBase: 'https://www.apollopharmacy.in/search-medicines/'),

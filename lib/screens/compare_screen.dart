@@ -54,7 +54,7 @@ class CompareScreen extends StatelessWidget {
           builder: (context, _) {
             final entries = priceBook.of(med.id);
             final ranked = priceBook.ranked(med.id);
-            final done = entries.length;
+            final done = pharmacies.where((p) => entries.containsKey(p.id)).length;
             final rows = _orderedRows(entries);
             final bestId = ranked.isEmpty ? null : ranked.first.$1.id;
 

@@ -190,6 +190,7 @@ class _Actions extends StatelessWidget {
                 )
               : Row(children: [
                   Expanded(
+                    flex: 2,
                     child: SecondaryButton(
                       label: context.tr('mark_used'),
                       icon: Icons.remove_circle_outline_rounded,
@@ -201,6 +202,7 @@ class _Actions extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
+                    flex: 3,
                     child: PrimaryButton(
                       label: context.tr('compare_prices'),
                       icon: Icons.price_check_rounded,
