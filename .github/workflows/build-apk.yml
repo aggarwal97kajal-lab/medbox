@@ -57,10 +57,36 @@ jobs:
           name: MedBox-apk
           path: MedBox.apk
 
+      - name: Enable KVM for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Open the app on an Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        continue-on-error: true
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: false
+          script: bash .github/smoke.sh
+
+      - name: Pack emulator results
+        if: always()
+        run: |
+          mkdir -p smoke
+          cd smoke && zip -q ../smoke-test.zip * || true
+
       - name: Publish release
+        if: always()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: MedBox build ${{ github.run_number }}
           body: Download MedBox.apk below and open it on your Android phone to install.
-          files: MedBox.apk
+          files: |
+            MedBox.apk
+            smoke-test.zip

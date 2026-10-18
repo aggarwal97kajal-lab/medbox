@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -28,22 +27,18 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = BorderRadius.circular(radius);
-    return ClipRRect(
-      borderRadius: r,
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            borderRadius: r,
-            color: (tint ?? Colors.white)
-                .withValues(alpha: tint == null ? 0.06 : 0.12),
-            border: Border.all(
-                color: borderColor ?? Colors.white.withValues(alpha: 0.10)),
-          ),
-          child: child,
-        ),
+    // Translucent fill instead of a live BackdropFilter: lists of blurred
+    // cards are very slow on many Android phones.
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        borderRadius: r,
+        color: tint == null
+            ? const Color(0xFF141C25).withValues(alpha: 0.72)
+            : Color.alphaBlend(tint!.withValues(alpha: 0.12), const Color(0xFF141C25)).withValues(alpha: 0.85),
+        border: Border.all(color: borderColor ?? Colors.white.withValues(alpha: 0.10)),
       ),
+      child: child,
     );
   }
 }

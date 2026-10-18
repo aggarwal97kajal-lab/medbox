@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
@@ -36,15 +35,21 @@ class _AuroraBackgroundState extends State<AuroraBackground>
     super.dispose();
   }
 
+  // Soft radial-gradient blobs: looks like a heavy blur but costs almost
+  // nothing to draw, so it stays smooth on low-end phones.
   Widget _blob(double x, double y, double d, Color color) => Positioned(
-        left: x - d / 2,
-        top: y - d / 2,
+        left: x - d,
+        top: y - d,
         child: Container(
-          width: d,
-          height: d,
+          width: d * 2,
+          height: d * 2,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: color.withValues(alpha: widget.intensity),
+            gradient: RadialGradient(colors: [
+              color.withValues(alpha: widget.intensity),
+              color.withValues(alpha: widget.intensity * 0.45),
+              color.withValues(alpha: 0),
+            ], stops: const [0, 0.4, 1]),
           ),
         ),
       );
@@ -61,9 +66,7 @@ class _AuroraBackgroundState extends State<AuroraBackground>
               animation: _c,
               builder: (context, _) {
                 final t = _c.value * 2 * math.pi;
-                return ImageFiltered(
-                  imageFilter: ui.ImageFilter.blur(sigmaX: 70, sigmaY: 70),
-                  child: Stack(children: [
+                return Stack(children: [
                     _blob(size.width * (0.15 + 0.12 * math.sin(t)),
                         size.height * (0.08 + 0.05 * math.cos(t)), 260,
                         widget.colors[0]),
@@ -73,8 +76,7 @@ class _AuroraBackgroundState extends State<AuroraBackground>
                     _blob(size.width * (0.40 + 0.15 * math.sin(t + 2)),
                         size.height * (0.78 + 0.05 * math.cos(t)), 280,
                         widget.colors[2]),
-                  ]),
-                );
+                  ]);
               },
             ),
           ),
