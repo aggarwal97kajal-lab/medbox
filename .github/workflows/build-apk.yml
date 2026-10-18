@@ -39,6 +39,11 @@ jobs:
           grep -q 'android.permission.INTERNET' $MANIFEST || \
             sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' $MANIFEST
           sed -i 's/android:label="medbox"/android:label="MedBox"/' $MANIFEST
+          # Use the Skia renderer: Impeller's Vulkan path hangs on the first
+          # frame on some phones and on the CI emulator.
+          grep -q 'EnableImpeller' $MANIFEST || \
+            sed -i 's#<activity#<meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false"/>\n        <activity#' $MANIFEST
+          grep -n -E 'INTERNET|EnableImpeller|label' $MANIFEST
 
       - run: flutter pub get
 
