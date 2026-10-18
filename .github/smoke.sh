@@ -1,26 +1,31 @@
 #!/bin/bash
-# Installs the APK on the CI emulator, opens it and records what happens.
+# Installs the APK on the CI emulator, opens it, taps through the tabs and
+# records screenshots + logs.
 mkdir -p smoke
 exec > >(tee smoke/run.log) 2>&1
 set -x
-which adb
-adb devices -l
 adb wait-for-device
 for i in $(seq 1 60); do
   [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ] && break
   sleep 5
 done
-adb shell getprop ro.build.version.sdk
+sleep 20   # let the launcher settle so it doesn't show "not responding"
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
+adb shell wm size
+adb shell wm density
 adb install -r MedBox.apk
-adb shell pm list packages | grep -i medbox
 adb logcat -c
 adb shell am start -W -n in.medbox.medbox/.MainActivity
-sleep 2;  adb exec-out screencap -p > smoke/01_after_2s.png
-sleep 8;  adb exec-out screencap -p > smoke/02_after_10s.png
-sleep 6;  adb exec-out screencap -p > smoke/03_after_16s.png
-adb shell input tap 540 1750; sleep 3; adb exec-out screencap -p > smoke/04_tap.png
-adb shell dumpsys activity activities | grep -i -E "ResumedActivity" 
+shot() { adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null; adb exec-out screencap -p > "smoke/$1.png"; }
+sleep 2;  shot 01_splash
+sleep 10; shot 02_home
+adb shell input tap 336 2022;  sleep 4; shot 03_box
+adb shell input tap 744 2022;  sleep 4; shot 04_alerts
+adb shell input tap 942 2022;  sleep 4; shot 05_settings
+adb shell input tap 120 2022;  sleep 4; shot 06_home_again
+adb shell input tap 540 1946;  sleep 5; shot 07_scan
+adb shell dumpsys activity activities | grep -i -E "ResumedActivity"
 adb logcat -d > smoke/logcat_full.txt
-grep -E "flutter|MEDBOX|AndroidRuntime|FATAL|Exception|ANR" smoke/logcat_full.txt > smoke/logcat_errors.txt
+grep -E "MEDBOX|AndroidRuntime|FATAL|ANR in|flutter.*(Exception|Error)" smoke/logcat_full.txt > smoke/logcat_errors.txt
 ls -la smoke
 exit 0

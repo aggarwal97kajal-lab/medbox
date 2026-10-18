@@ -44,6 +44,19 @@ jobs:
           grep -q 'EnableImpeller' $MANIFEST || \
             sed -i 's#<activity#<meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false"/>\n        <activity#' $MANIFEST
           grep -n -E 'INTERNET|EnableImpeller|label' $MANIFEST
+          # R8 strips methods shared_preferences calls through Pigeon in release
+          # builds (NoSuchMethodError at startup). Keep them.
+          cat > android/app/proguard-rules.pro <<'RULES'
+          -keep class io.flutter.plugins.sharedpreferences.** { *; }
+          -keep class io.flutter.plugins.webviewflutter.** { *; }
+          -keep class io.flutter.plugins.urllauncher.** { *; }
+          -keep class kotlin.coroutines.** { *; }
+          -keep class kotlinx.coroutines.** { *; }
+          -keepattributes Signature,*Annotation*,InnerClasses,EnclosingMethod
+          RULES
+          sed -i 's/^ *//' android/app/proguard-rules.pro
+          cat android/app/proguard-rules.pro
+          ls android/app/
 
       - run: flutter pub get
 
