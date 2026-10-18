@@ -52,11 +52,17 @@ jobs:
           -keep class io.flutter.plugins.urllauncher.** { *; }
           -keep class kotlin.coroutines.** { *; }
           -keep class kotlinx.coroutines.** { *; }
+          -keep class kotlin.** { *; }
+          -keep class io.flutter.** { *; }
           -keepattributes Signature,*Annotation*,InnerClasses,EnclosingMethod
           RULES
           sed -i 's/^ *//' android/app/proguard-rules.pro
           cat android/app/proguard-rules.pro
-          ls android/app/
+          # Turn off R8 shrinking for release: it strips Kotlin/Pigeon classes the
+          # plugins need (kotlin.Result missing -> shared_preferences fails).
+          GRADLE=android/app/build.gradle.kts
+          sed -i 's#signingConfig = signingConfigs.getByName("debug")#signingConfig = signingConfigs.getByName("debug")\n            isMinifyEnabled = false\n            isShrinkResources = false#' $GRADLE
+          grep -n -E 'isMinifyEnabled|isShrinkResources|signingConfig' $GRADLE
 
       - run: flutter pub get
 

@@ -19,6 +19,8 @@ adb shell am start -W -n in.medbox.medbox/.MainActivity
 shot() { adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null; adb exec-out screencap -p > "smoke/$1.png"; }
 sleep 2;  shot 01_splash
 sleep 10; shot 02_home
+adb shell input tap 540 1250; sleep 5; shot 02b_detail
+adb shell input keyevent 4; sleep 3
 adb shell input tap 336 2022;  sleep 4; shot 03_box
 adb shell input tap 744 2022;  sleep 4; shot 04_alerts
 adb shell input tap 942 2022;  sleep 4; shot 05_settings
